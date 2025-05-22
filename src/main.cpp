@@ -5,6 +5,8 @@ int main()
     // time_t t = timelocal(NULL);
     srand(NULL);
     const int N = 1000000;
+    int vec_c[3] = {0, 0 , 0};
+    int vec_cf[3] = {0.0f, 0.0f , 0.0f};
     int A[N];
     int B[N];
     int C[N];
