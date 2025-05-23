@@ -41,10 +41,14 @@ class vec3
             return ( (e[0]*e[0]) + (e[1]*e[1]) + (e[2]*e[2]) );
         }
         float len_f() const {
-            return sqrtf(vec3::len_f());
+            return sqrtf(vec3::len_sqf());
         }
-        float len_ffast() const {
+        float len_fast() const {
             // FUTURE FAST APPROX
+            int x = vec3::len_f();
+            int i = *(int*)&x;
+            i = (i >> 1) + 0x1FC00000;  // initial guess
+            return *(float*)&i;
         }
         
 };
