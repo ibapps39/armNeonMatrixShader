@@ -10,37 +10,26 @@
 #include "vec3.h"
 
 
-typedef struct TILE
-{
-    int start;
-    int end;
-} TILE;
+// typedef struct TILE
+// {
+//     int start;
+//     int end;
+// } TILE;
 
-// async
-void async_populate(vec3 arr[], TILE tile)
+
+
+// async, give an array random floats
+void async_populate(std::vector<vec3>& v, int start, int end)
 {
-    for (int i = tile.start; i < tile.end; i++)
+    for (int i = start; i < end; i++)
     {
-        arr[i] = rand_vecf();
+        v[i] = rand_vecf();
     }
 }
-
-void create_threads(std::vector<std::thread>& threads_v, TILE tile, vec3 arr[])
+// threads to vector that are prepopulated with tiles
+void push_threads(std::vector<std::thread>& threads_v, int start, int end, std::vector<vec3>& v)
 {
-    for (size_t i = tile.start; i < tile.end; i++)
-    {
-        threads_v.push_back(std::thread(&async_populate, arr, tile));
-    }
-}
-void create_tile(std::vector<TILE>& tile_v, int start, int tile_size, int max_threads, int N, int tile_idx = 0) {
-    if (start >= N || tile_idx >= max_threads) return;
-    
-    TILE tile;
-    tile.start = start;
-    tile.end = std::min(start + tile_size - 1 + (tile_idx < N % max_threads ? 1 : 0), N - 1);
-    tile_v.push_back(tile);
-    
-    create_tile(tile_v, tile.end + 1, tile_size, max_threads, N, tile_idx + 1);
+    threads_v.push_back( std::thread(&async_populate, std::ref(v), start, end) );
 }
 
 inline std::string exec(const char *cmd)
