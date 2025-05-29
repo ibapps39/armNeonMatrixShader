@@ -8,6 +8,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include "vec3.h"
+#include <chrono>
 
 
 // typedef struct TILE
