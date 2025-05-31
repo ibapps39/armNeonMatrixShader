@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -O3 -Wall -std=c++17 -Wno-missing-braces
+CFLAGS = -march=armv8-a+simd -O3 -Wall -std=c++17 -Wno-missing-braces
 LDFLAGS =  
 INCLUDES = -I./include
 

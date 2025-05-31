@@ -12,6 +12,12 @@ class vec3
         float y() const { return e[Y]; };
         float z() const { return e[Z]; };
         // Vec Addit.
+        vec3& operator+ (const vec3& v) {
+            e[X] += v.e[X];
+            e[Y] += v.e[Y];
+            e[Z] += v.e[Z];
+            return *this;
+        }
         vec3& operator+= (const vec3& v) {
             e[X] += v.e[X];
             e[Y] += v.e[Y];
@@ -19,6 +25,12 @@ class vec3
             return *this;
         }
         // Vector Sub.
+        vec3& operator- (const vec3& v) {
+            e[X] -= v.e[X];
+            e[Y] -= v.e[Y];
+            e[Z] -= v.e[Z];
+            return *this;
+        }
         vec3& operator-= (const vec3& v) {
             e[X] -= v.e[X];
             e[Y] -= v.e[Y];
