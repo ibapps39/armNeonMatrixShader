@@ -78,3 +78,4 @@ inline vec3 rand_vecf() {
         rand()%101 + (1/(rand()%100)) 
     );
 }
+

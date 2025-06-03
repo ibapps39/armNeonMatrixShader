@@ -1,4 +1,5 @@
 #include "common.h"
+#include <cassert>
 #pragma once
 
 float* flatten_vec3(const std::vector<vec3>& arr)
@@ -49,30 +50,169 @@ void example_SIMD()
         std::cout << " " << e; 
     }
 }
-void vec3_SIMD_add(const std::vector<vec3>& dst, const std::vector<vec3>& A, const std::vector<vec3>& B, size_t N)
-{
-    float* A_flat = flatten_vec3(A);
-    float* B_flat = flatten_vec3(B);
-    float* result[N*3];
-    size_t i = 0;
-    for (; i + 4 <= N; i += 4) {
-        // Load 4 vec3s = 12 floats
-        float32x4x3_t va = vld3q_f32(A_flat + i * 3);
-        float32x4x3_t vb = vld3q_f32(B_flat + i * 3);
-
-        float32x4x3_t vc;
-        vc.val[0] = vaddq_f32(va.val[0], vb.val[0]);  // x components
-        vc.val[1] = vaddq_f32(va.val[1], vb.val[1]);  // y components
-        vc.val[2] = vaddq_f32(va.val[2], vb.val[2]);  // z components
-
-        vst3q_f32(result + i * 3, vc);
+/// @brief AI, SIMD to calculate vector vec3 
+/// @param A Vector
+/// @param B Vector
+/// @param C Sum Vector
+void add_vec3_arrays_neon(const std::vector<vec3>& A, const std::vector<vec3>& B, std::vector<vec3>& C) {
+    // Ensure all vectors have the same size
+    assert(A.size() == B.size());
+    C.resize(A.size());
+    
+    const size_t size = A.size();
+    const float* a_ptr = reinterpret_cast<const float*>(A.data());
+    const float* b_ptr = reinterpret_cast<const float*>(B.data());
+    float* c_ptr = reinterpret_cast<float*>(C.data());
+    
+    // Process 4 floats at a time (which covers 1.33 vec3s)
+    // We need to process 3*size floats total
+    const size_t total_floats = size * 3;
+    const size_t neon_iterations = total_floats / 4;
+    const size_t remaining_floats = total_floats % 4;
+    
+    // NEON processing - 4 floats at a time
+    for (size_t i = 0; i < neon_iterations; ++i) {
+        const size_t offset = i * 4;
+        
+        // Load 4 floats from A and B
+        float32x4_t va = vld1q_f32(a_ptr + offset);
+        float32x4_t vb = vld1q_f32(b_ptr + offset);
+        
+        // Add vectors
+        float32x4_t vc = vaddq_f32(va, vb);
+        
+        // Store result
+        vst1q_f32(c_ptr + offset, vc);
     }
-
-    // Fallback for remaining (less than 4)
-    for (; i < N; ++i) {
-        result[i * 3 + 0] = A_flat[i * 3 + 0] + B_flat[i * 3 + 0];
-        result[i * 3 + 1] = A[i * 3 + 1] + B[i * 3 + 1];
-        result[i * 3 + 2] = A[i * 3 + 2] + B[i * 3 + 2];
+    
+    // Handle remaining floats (0-3 remaining)
+    const size_t processed_floats = neon_iterations * 4;
+    for (size_t i = 0; i < remaining_floats; ++i) {
+        c_ptr[processed_floats + i] = a_ptr[processed_floats + i] + b_ptr[processed_floats + i];
     }
+}
 
+// Alternative version that processes exactly vec3 boundaries
+void add_vec3_arrays_neon_aligned(const std::vector<vec3>& A, const std::vector<vec3>& B, std::vector<vec3>& C) {
+    assert(A.size() == B.size());
+    C.resize(A.size());
+    
+    const size_t size = A.size();
+    
+    // Process pairs of vec3s (6 floats = 1.5 NEON registers)
+    const size_t pairs = size / 2;
+    const size_t remaining = size % 2;
+    
+    const float* a_ptr = reinterpret_cast<const float*>(A.data());
+    const float* b_ptr = reinterpret_cast<const float*>(B.data());
+    float* c_ptr = reinterpret_cast<float*>(C.data());
+    
+    // Process pairs of vec3s (6 floats each iteration)
+    for (size_t i = 0; i < pairs; ++i) {
+        const size_t offset = i * 6;
+        
+        // Load first 4 floats
+        float32x4_t va1 = vld1q_f32(a_ptr + offset);
+        float32x4_t vb1 = vld1q_f32(b_ptr + offset);
+        float32x4_t vc1 = vaddq_f32(va1, vb1);
+        vst1q_f32(c_ptr + offset, vc1);
+        
+        // Load remaining 2 floats (using 2-element load)
+        float32x2_t va2 = vld1_f32(a_ptr + offset + 4);
+        float32x2_t vb2 = vld1_f32(b_ptr + offset + 4);
+        float32x2_t vc2 = vadd_f32(va2, vb2);
+        vst1_f32(c_ptr + offset + 4, vc2);
+    }
+    
+    // Handle remaining single vec3 if odd number
+    if (remaining > 0) {
+        const size_t offset = pairs * 6;
+        
+        // Process last vec3 with scalar operations
+        for (int j = 0; j < 3; ++j) {
+            c_ptr[offset + j] = a_ptr[offset + j] + b_ptr[offset + j];
+        }
+    }
+}
+// Return-based version - returns sum vector
+std::vector<vec3> add_vec3_arrays_neon_return(const std::vector<vec3>& A, const std::vector<vec3>& B) {
+    assert(A.size() == B.size());
+    
+    std::vector<vec3> C(A.size());
+    
+    const size_t size = A.size();
+    const float* a_ptr = reinterpret_cast<const float*>(A.data());
+    const float* b_ptr = reinterpret_cast<const float*>(B.data());
+    float* c_ptr = reinterpret_cast<float*>(C.data());
+    
+    // Process 4 floats at a time
+    const size_t total_floats = size * 3;
+    const size_t neon_iterations = total_floats / 4;
+    const size_t remaining_floats = total_floats % 4;
+    
+    // NEON processing - 4 floats at a time
+    for (size_t i = 0; i < neon_iterations; ++i) {
+        const size_t offset = i * 4;
+        
+        // Load 4 floats from A and B
+        float32x4_t va = vld1q_f32(a_ptr + offset);
+        float32x4_t vb = vld1q_f32(b_ptr + offset);
+        
+        // Add vectors
+        float32x4_t vc = vaddq_f32(va, vb);
+        
+        // Store result
+        vst1q_f32(c_ptr + offset, vc);
+    }
+    
+    // Handle remaining floats (0-3 remaining)
+    const size_t processed_floats = neon_iterations * 4;
+    for (size_t i = 0; i < remaining_floats; ++i) {
+        c_ptr[processed_floats + i] = a_ptr[processed_floats + i] + b_ptr[processed_floats + i];
+    }
+    
+    return C;
+}
+
+// Alternative return-based version with vec3 boundary alignment
+std::vector<vec3> add_vec3_arrays_neon_return_aligned(const std::vector<vec3>& A, const std::vector<vec3>& B) {
+    assert(A.size() == B.size());
+    
+    std::vector<vec3> C(A.size());
+    
+    const size_t size = A.size();
+    const size_t pairs = size / 2;
+    const size_t remaining = size % 2;
+    
+    const float* a_ptr = reinterpret_cast<const float*>(A.data());
+    const float* b_ptr = reinterpret_cast<const float*>(B.data());
+    float* c_ptr = reinterpret_cast<float*>(C.data());
+    
+    // Process pairs of vec3s (6 floats each iteration)
+    for (size_t i = 0; i < pairs; ++i) {
+        const size_t offset = i * 6;
+        
+        // Load first 4 floats
+        float32x4_t va1 = vld1q_f32(a_ptr + offset);
+        float32x4_t vb1 = vld1q_f32(b_ptr + offset);
+        float32x4_t vc1 = vaddq_f32(va1, vb1);
+        vst1q_f32(c_ptr + offset, vc1);
+        
+        // Load remaining 2 floats
+        float32x2_t va2 = vld1_f32(a_ptr + offset + 4);
+        float32x2_t vb2 = vld1_f32(b_ptr + offset + 4);
+        float32x2_t vc2 = vadd_f32(va2, vb2);
+        vst1_f32(c_ptr + offset + 4, vc2);
+    }
+    
+    // Handle remaining single vec3 if odd number
+    if (remaining > 0) {
+        const size_t offset = pairs * 6;
+        
+        for (int j = 0; j < 3; ++j) {
+            c_ptr[offset + j] = a_ptr[offset + j] + b_ptr[offset + j];
+        }
+    }
+    
+    return C;
 }
