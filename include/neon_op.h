@@ -2,27 +2,26 @@
 #include <cassert>
 #pragma once
 
-float* flatten_vec3(const std::vector<vec3>& arr)
+inline float* flatten_vec3(const std::vector<vec3>& vec3_vector, vec3::dim dim)
 {
-    float* flat_arr = new float[arr.size() * 3];  // Allocate dynamic memory
-    for (int i = 0; i < arr.size(); ++i)
+    float* arr = new float[vec3_vector.size()];
+    
+    for (size_t i = 0; i < vec3_vector.size(); i++)
     {
-        flat_arr[i*3]       = arr[i].x();
-        flat_arr[i*3 + 1]   = arr[i].y();
-        flat_arr[i*3 + 2]   = arr[i].z();
+        arr[i] = vec3_vector[i][dim];
     }
-    return flat_arr;
+    return arr;
 }
-std::vector<float> flatten_vec3_vec(const std::vector<vec3>& arr) {
-    std::vector<float> flat;
-    flat.reserve(arr.size() * 3);
-    for (const auto& v : arr) {
-        flat.push_back(v.x());
-        flat.push_back(v.y());
-        flat.push_back(v.z());
-    }
-    return flat;
-}
+// std::vector<float> flatten_vec3_vec(const std::vector<vec3>& arr) {
+//     std::vector<float> flat;
+//     flat.reserve(arr.size() * 3);
+//     for (const auto& v : arr) {
+//         flat.push_back(v.x());
+//         flat.push_back(v.y());
+//         flat.push_back(v.z());
+//     }
+//     return flat;
+// }
 
 inline void add_float_c(std::vector<vec3> dst, std::vector<vec3> src1, std::vector<vec3> src2, int count)
 
