@@ -48,6 +48,8 @@ std::cout << "\n//////////////////////////////////////////////////\n";
     std::cout << "add_float_neon1 (C = A+B) - neon, time: " << c_time_neon1 << "s" << std::endl;
     std::cout << std::endl;
     //\\/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    double thrd = timeFunction(start_neon_threads_test, A, B, C, max_threads);
+    std::clog << "\nthrd === " << thrd << std::endl;
     std::cout << "\n//////////////////////////////////////////////////\n";
     return 0;
 }

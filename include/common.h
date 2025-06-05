@@ -12,7 +12,7 @@
 #include "vec3.h"
 #include "neon_op.h"
 #include "vec3n.h"
-
+#include "test.h"
 
 template<typename Func, typename... Args>
 auto timeFunction(Func&& f, Args&&... args) {
