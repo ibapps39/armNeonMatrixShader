@@ -64,6 +64,11 @@ public:
         i = (i >> 1) + 0x1FC00000; // initial guess
         return *(float *)&i;
     }
+    inline void normalize()
+    {
+        float length = vec3::len_f();
+        *this = (length == 0 || length < 1e-8) ? vec3(0,0,0) : vec3(this->x()/length, this->x()/length, this->x()/length);
+    }
 };
 inline vec3 rand_vec()
 {
@@ -128,6 +133,11 @@ vec3 cross(const vec3 &u, const vec3 &v)
         u.e[vec3::Z] * v.e[vec3::X] - u.e[vec3::X] * v.e[vec3::Z],
         u.e[vec3::X] * v.e[vec3::Y] - u.e[vec3::Y] * v.e[vec3::X]
     );
+}
+inline void normalize(const vec3& u)
+{
+    float length = u.len_f();
+    (length == 0 || length < 1e-8) ? vec3(0,0,0) : u/length;
 }
 std::ostream& operator<<(std::ostream& out, vec3& u)
 {

@@ -30,26 +30,26 @@ std::cout << "\n//////////////////////////////////////////////////\n";
     example_SIMD();
     std::cout << std::endl;
 //\\/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     std::cout << "NEON: C vs NEON" << std::endl;
     double c_time_c = timeFunction(add_float_c, C, A, B, N);
 //\\/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    double c_time_neon1 = timeFunction(add_vec3_arrays_neon, A, B, C);
-    std::cout << std::endl;
-    for(int i = 0; i < 5; i++)
-    {
-        std::cout << "A" << i << "[" << A[i].x() << ", " << A[i].y() << ", " << A[i].z() << "]\n";
-        std::cout << "B" << i << "[" << B[i].x() << ", " << B[i].y() << ", " << B[i].z() << "]\n";
-        std::cout << "C" << i << "[" << C[i].x() << ", " << C[i].y() << ", " << C[i].z() << "]\n";
-        std::cout << "\n";
-    }
-    std::cout << "add_float_c (C = A+B) - linear, for loop time: " << c_time_c << "s" << std::endl;
-    std::cout << "add_float_neon1 (C = A+B) - neon, time: " << c_time_neon1 << "s" << std::endl;
-    std::cout << std::endl;
-    //\\/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    double thrd = timeFunction(start_neon_threads_test, A, B, C, max_threads);
-    std::clog << "\nthrd === " << thrd << std::endl;
+    // double c_time_neon1 = timeFunction(add_vec3_arrays_neon, A, B, C);
+    // std::cout << std::endl;
+    // for(int i = 0; i < 5; i++)
+    // {
+    //     std::cout << "A" << i << "[" << A[i].x() << ", " << A[i].y() << ", " << A[i].z() << "]\n";
+    //     std::cout << "B" << i << "[" << B[i].x() << ", " << B[i].y() << ", " << B[i].z() << "]\n";
+    //     std::cout << "C" << i << "[" << C[i].x() << ", " << C[i].y() << ", " << C[i].z() << "]\n";
+    //     std::cout << "\n";
+    // }
+    // std::cout << "add_float_c (C = A+B) - linear, for loop time: " << c_time_c << "s" << std::endl;
+    // std::cout << "add_float_neon1 (C = A+B) - neon, time: " << c_time_neon1 << "s" << std::endl;
+    // std::cout << std::endl;
+
+//\\/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //double neon_threads_test_time = timeFunction(start_neon_threads_test, A, B, C, max_threads);
+    //std::clog << "\nthrd === " << neon_threads_test_time << std::endl;
     std::cout << "\n//////////////////////////////////////////////////\n";
     return 0;
 }
