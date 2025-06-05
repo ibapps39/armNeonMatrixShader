@@ -1,0 +1,14 @@
+#pragma once
+#include <iostream>
+#include <vector>
+#include <string>
+#include <chrono>   // For timing
+#include <numeric>  // For std::iota, if you use it
+#include <algorithm> // For std::transform, std::generate etc.
+#include "vec3.h"
+
+
+ std::vector<vec3> generate_random_vec3_vector(size_t count)
+ {
+    
+ }
