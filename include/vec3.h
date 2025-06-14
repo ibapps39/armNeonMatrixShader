@@ -80,9 +80,9 @@ inline vec3 rand_vec()
 inline vec3 rand_vecf()
 {
     return vec3(
-        rand() % 101 + (1 / (rand() % 100)),
-        rand() % 101 + (1 / (rand() % 100)),
-        rand() % 101 + (1 / (rand() % 100)));
+        rand() % 101 + (1.00f / (rand() % 100)),
+        rand() % 101 + (1.00f / (rand() % 100)),
+        rand() % 101 + (1.00f / (rand() % 100)));
 }
 
 vec3 operator+(const vec3 &u, const vec3 &v)
