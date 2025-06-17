@@ -2,35 +2,6 @@
 #include <cassert>
 #pragma once
 
-// std::vector<vec3> neon_add(const std::vector<vec3>& a, const std::vector<vec3>& b)
-// {
-//     assert(a.size() == b.size() && !(a.empty()));
-//     size_t size = a.size();
-    
-//     const float* a_ptr = reinterpret_cast<const float*>(a.data());
-//     const float* b_ptr = reinterpret_cast<const float*>(b.data());
-//     std::vector<vec3> c;
-//     c.reserve(size);
-//     size_t i = 0;
-//     i < size;
-//     for (; ; i+= 4)
-//     {
-//         float32x4x3_t a = vld3q_f32(a_ptr + i * 3);
-//         float32x4x3_t b = vld3q_f32(b_ptr + i * 3);
-//         float32x4x3_t result;
-//         // x
-//         result.val[0] = vaddq_f32(a.val[0], b.val[0]);
-//         // y
-//         result.val[1] = vaddq_f32(a.val[1], b.val[1]);
-//         // z
-//         result.val[2] = vaddq_f32(a.val[2], b.val[2]);
-
-//         // c.at(i)[0] = result.val[0][0];
-//         // c.at(i)[1] = result.val[1][1];
-//         // c.at(i)[2] = result.val[2][2];
-//     }
-//     return c;
-// }
 void neon_add_test(const std::vector<vec3>& a, const std::vector<vec3>& b)
 {
     assert(a.size() == b.size());
@@ -127,12 +98,6 @@ void add_float_neonc(std::vector<vec3> A, std::vector<vec3> B, std::vector<vec3>
 {
     //.004!
     for (size_t i = 0; i < A.size(); i+=3)
-    {
-        C[i].e[0] = A[i].e[0] + B[i].e[0];
-        C[i].e[1] = A[i].e[1] + B[i].e[1];
-        C[i].e[2] = A[i].e[2] + B[i].e[2];
-    }
-        for (size_t i = 0; i < A.size(); i+=3)
     {
         C[i].e[0] = A[i].e[0] + B[i].e[0];
         C[i].e[1] = A[i].e[1] + B[i].e[1];

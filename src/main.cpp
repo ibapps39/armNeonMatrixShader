@@ -15,27 +15,24 @@ int main()
     int max_threads = std::stoi(max_t);
     unsigned int m_threads = std::thread::hardware_concurrency();
     std::clog << "MAX THREADS per sysctl -n hw.ncpu: maxt = " << max_threads << std::endl;
+    std::clog << "MAX THREADS per sysctl -n hw.ncpu: maxt = " << m_threads << std::endl;
+    assert(m_threads == max_threads);
 
     // double a_time = timeFunction(async_populate, A, 0, N - 1);
-    double at_time = timeFunction(start_threads, N, max_threads, A);
-    double b_time = timeFunction(start_threads, N, max_threads, B);
+    std::cout << "POPULATING A, B USING THREADS" << std::endl;
+    double at_time = timeFunction(start_threads, N, m_threads, A);
+    double b_time = timeFunction(start_threads, N, m_threads, B);
+    std::cout << "VECTORS CURRENTLY:" << std::endl;
     read_vec(A, B, C);
 
-    // std::cout << "A - linear, for loop time: " << a_time << "s" << std::endl;
-    // std::cout << "B - threads, time: " << b_time << "s" << std::endl;
-    // std::cout << std::endl;
+    std::cout << "SIZE: A =" << A.size() << "\nSIZE: B =" << B.size() << std::endl;
+    std::cout << "(A.size() == B.size()) = " << (A.size() == B.size()) << std::endl;
 
-    std::cout << "\n//////////////////////////////////////////////////\n";
-
+    std::cout << "ADD FLOAT NEONC:" << std::endl;
     double add_float_neonc_t = timeFunction(add_float_neonc, A, B, C);
-    std::cout << "\ntimeFunction(add_float_neonc, A, B, C): " << add_float_neonc_t << std::endl;
-    std::cout << A.size() << std::endl;
-    std::cout << B.size() << std::endl;
-    std::cout << (A.size() == B.size()) << std::endl;
+    std::cout << "TIME: timeFunction(add_float_neonc, A, B, C): " << add_float_neonc_t << std::endl;
+    std::cout << "VECTORS CURRENTLY:" << std::endl;
     read_vec(A, B, C);
-
-    //double time_neon_add_test = timeFunction(neon_add_test, A, B);
-    // std::cout << "\ntimeFunction(neon_add_test, A, B) " << time_neon_add_test << std::endl;
     
     std::cout << "\n//END////END////END////END////END////END////END//\n";
     return 0;

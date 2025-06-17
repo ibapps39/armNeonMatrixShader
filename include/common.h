@@ -29,13 +29,12 @@ void read_vec(const std::vector<vec3> &A, const std::vector<vec3> &B, const std:
         std::cout << "B" << i << "[" << B[i].x() << ", " << B[i].y() << ", " << B[i].z() << "]\n";
     }
     std::cout << std::endl;
-    if (C[0].x() == 0 && C[0].x() == 0 && C[0].x() == 0) {return;}
-
-        std::cout << "First 10 elements: C" << std::endl;
-        for (size_t i = 0; i < 11; i++)
-        {
-            std::cout << "C" << i << "[" << C[i].x() << ", " << C[i].y() << ", " << C[i].z() << "]\n";
-        }
+    std::cout << "First 10 elements: C" << std::endl;
+    for (size_t i = 0; i < 11; i++)
+    {
+        std::cout << "C" << i << "[" << C[i].x() << ", " << C[i].y() << ", " << C[i].z() << "]\n";
+    }
+    
     std::cout << std::endl;
 }
 void read_arr(float*& flat, int start, int end, vec3::dim dim)
