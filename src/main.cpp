@@ -18,16 +18,10 @@ int main()
     std::clog << "MAX THREADS per sysctl -n hw.ncpu: maxt = " << m_threads << std::endl;
     assert(m_threads == max_threads);
 
-    // double a_time = timeFunction(async_populate, A, 0, N - 1);
     std::cout << "POPULATING A, B USING THREADS" << std::endl;
-    double at_time = timeFunction(start_threads, N, m_threads, A);
-    double b_time = timeFunction(start_threads, N, m_threads, B);
-    std::cout << "VECTORS CURRENTLY:" << std::endl;
-    read_vec(A, B, C);
-
-    std::cout << "SIZE: A =" << A.size() << "\nSIZE: B =" << B.size() << std::endl;
-    std::cout << "(A.size() == B.size()) = " << (A.size() == B.size()) << std::endl;
-
+    double a_populated_by_threads = timeFunction(start_threads, N, m_threads, A);
+    double b__populated_by_threads = timeFunction(start_threads, N, m_threads, B);
+    
     std::cout << "ADD FLOAT NEONC:" << std::endl;
     double add_float_neonc_t = timeFunction(add_float_neonc, A, B, C);
     std::cout << "TIME: timeFunction(add_float_neonc, A, B, C): " << add_float_neonc_t << std::endl;

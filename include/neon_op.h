@@ -6,14 +6,15 @@ void neon_add_test(const std::vector<vec3>& a, const std::vector<vec3>& b)
 {
     assert(a.size() == b.size());
     size_t size = a.size();
-    
+
+    std::vector<vec3> c;
+    c.resize(size);
+
     const float* a_ptr = reinterpret_cast<const float*>(a.data());
     const float* b_ptr = reinterpret_cast<const float*>(b.data());
-    std::vector<vec3> c[1000000];
-    // c.reserve(size);
-    size_t i = 0;
-    i < size;
-    for (; ; i+= 4)
+    float* c_ptr = reinterpret_cast<float*>(c.data());
+    
+    for (size_t i = 0; i < size; i+= 4)
     {
         float32x4x3_t a = vld3q_f32(a_ptr + i * 3);
         float32x4x3_t b = vld3q_f32(b_ptr + i * 3);
@@ -94,16 +95,6 @@ vld3q_f32 reads this and creates:
 - val[1] = [2,5,8,11]   (Y components) 
 - val[2] = [3,6,9,12]   (Z components)
 */
-void add_float_neonc(std::vector<vec3> A, std::vector<vec3> B, std::vector<vec3> C)
-{
-    //.004!
-    for (size_t i = 0; i < A.size(); i+=3)
-    {
-        C[i].e[0] = A[i].e[0] + B[i].e[0];
-        C[i].e[1] = A[i].e[1] + B[i].e[1];
-        C[i].e[2] = A[i].e[2] + B[i].e[2];
-    }
-}
 void example_SIMD()
 {
     float a[4] = {rand_vec().x(), rand_vec().y(), rand_vec().z(), 1.0f};
@@ -119,6 +110,16 @@ void example_SIMD()
     for (auto& e : result)
     {
         std::cout << " " << e; 
+    }
+}
+void add_float_neonc(std::vector<vec3>& A, std::vector<vec3>& B, std::vector<vec3>& C)
+{
+    // 0.001341 seconds!
+    for (size_t i = 0; i < A.size(); i++)
+    {
+        C[i].e[0] = A[i].e[0] + B[i].e[0];
+        C[i].e[1] = A[i].e[1] + B[i].e[1];
+        C[i].e[2] = A[i].e[2] + B[i].e[2];
     }
 }
 inline void add_float_c(std::vector<vec3> dst, std::vector<vec3> src1, std::vector<vec3> src2, int count)

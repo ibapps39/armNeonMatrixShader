@@ -17,20 +17,20 @@
 void read_vec(const std::vector<vec3> &A, const std::vector<vec3> &B, const std::vector<vec3> &C)
 {
 
-    std::cout << "First 10 elements: A" << std::endl;
-    for (size_t i = 0; i < 11; i++)
+    std::cout << "First 5 elements: A" << std::endl;
+    for (size_t i = 0; i < 5; i++)
     {
         std::cout << "A" << i << "[" << A[i].x() << ", " << A[i].y() << ", " << A[i].z() << "]\n";
     }
     std::cout << std::endl;
-    std::cout << "First 10 elements: B" << std::endl;
-    for (size_t i = 0; i < 11; i++)
+    std::cout << "First 5 elements: B" << std::endl;
+    for (size_t i = 0; i < 5; i++)
     {
         std::cout << "B" << i << "[" << B[i].x() << ", " << B[i].y() << ", " << B[i].z() << "]\n";
     }
     std::cout << std::endl;
-    std::cout << "First 10 elements: C" << std::endl;
-    for (size_t i = 0; i < 11; i++)
+    std::cout << "First 5 elements: C" << std::endl;
+    for (size_t i = 0; i < 5; i++)
     {
         std::cout << "C" << i << "[" << C[i].x() << ", " << C[i].y() << ", " << C[i].z() << "]\n";
     }
