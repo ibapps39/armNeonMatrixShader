@@ -1,14 +1,24 @@
-# TODO
-- Fast inverse sqrt (because why not)
-- Approximating Float Square Roots Using Bit Manipulation
+# Results
+```zsh
+MAX THREADS per sysctl -n hw.ncpu: maxt = 8
+MAX THREADS per std::thread::hardware_concurrency() = 8
 
-Arr[N]
-Get max num of threads, max_threads
-Divide, N/max_threads, to get start and end of a thread. N/max_threads
-- start = x0, end = (n/max_threads)-1
-Create a thread with the array, start, and end
+N = 1000000
 
-N = 64, max_threads 8, [start, end][0,7][8,15],[16,23],[24,31][32,39][40,47][48,55][56,63], s = s+8 = s+max_threads
+POPULATING A, B USING THREADS
+Time to populate A with 1000000 elements: 0.010403s
+Time to populate B with 1000000 elements: 0.010283s
 
+ADD FLOAT C:
+TIME: timeFunction(add_float_c, A, B, C): 0.000847s
+Correct: 1000000/1000000
 
-[i+max_threads-1, (i = 0) ? max_threads-1 : max_threads]
+Time for neon_add (void) with 1000000 elements: 0.000733s
+Correct: 1000000/1000000
+
+Time for neon_add (returns std::vector<vec3>) with 1000000 elements: 0.002150s
+Correct: 1000000/1000000
+
+Time for neon_threads (void) with 1000000 elements: 0.000837s
+Correct: 1000000/1000000
+```
