@@ -3,7 +3,7 @@
 int main()
 {
     srand(time(NULL));
-    const int N = 100000000;
+    const int N = 1000000;
 
     std::vector<vec3> A(N);
     std::vector<vec3> B(N);
@@ -15,19 +15,48 @@ int main()
     int max_threads = std::stoi(max_t);
     unsigned int m_threads = std::thread::hardware_concurrency();
     std::clog << "MAX THREADS per sysctl -n hw.ncpu: maxt = " << max_threads << std::endl;
-    std::clog << "MAX THREADS per sysctl -n hw.ncpu: maxt = " << m_threads << std::endl;
+    std::clog << "MAX THREADS per std::thread::hardware_concurrency() = " << m_threads << std::endl;
     assert(m_threads == max_threads);
+     std::cout << std::endl;
+
+    std::cout << "N = " << N << std::endl;
+    std::cout << std::endl;
 
     std::cout << "POPULATING A, B USING THREADS" << std::endl;
     double a_populated_by_threads = timeFunction(start_threads, N, m_threads, A);
-    double b__populated_by_threads = timeFunction(start_threads, N, m_threads, B);
+    std::printf("Time to populate A with %i elements: %fs\n", N, a_populated_by_threads);
+    double b_populated_by_threads = timeFunction(start_threads, N, m_threads, B);
+    std::printf("Time to populate B with %i elements: %fs\n", N, b_populated_by_threads);
+    std::cout << std::endl;
 
-    // std::cout << "ADD FLOAT NEONC:" << std::endl;
-    // double add_float_neonc_t = timeFunction(add_float_neonc, A, B, C);
-    // std::cout << "TIME: timeFunction(add_float_neonc, A, B, C): " << add_float_neonc_t << std::endl;
+    std::cout << "ADD FLOAT C:" << std::endl;
+    double add_float_c_t = timeFunction(add_float_c, A, B, C);
+    std::cout << "TIME: timeFunction(add_float_c, A, B, C): " << add_float_c_t << "s" << std::endl;
+    validate_sum(A, B, C, N);
+    std::cout << std::endl;
+    std::fill(C.begin(), C.end(), vec3(0.00, 0.00, 0.00f));
 
-    double neon_add_t = timeFunction(neon_add, A, B, C);
-    std::cout << neon_add_t << std::endl;
+    double neon_add_t = timeFunction(
+        static_cast<void(*)(const std::vector<vec3> &, const std::vector<vec3> &, std::vector<vec3> &)>(neon_add), A, B, C
+    );
+    std::printf("Time for neon_add (void) with %i elements: %fs\n", N, neon_add_t);
+    validate_sum(A, B, C, N);
+    std::cout << std::endl;
+    std::fill(C.begin(), C.end(), vec3(0.00, 0.00, 0.00f));
+
+    auto [result, neon_add_t_returned] = timeFunction(
+        static_cast<std::vector<vec3>(*)(const std::vector<vec3> &, const std::vector<vec3> &)>(neon_add), A, B
+    );
+    std::printf("Time for neon_add (returns std::vector<vec3>) with %i elements: %fs\n", N, neon_add_t_returned);
+    C = result;
+    validate_sum(A, B, C, N);
+    std::cout << std::endl;
+    std::fill(C.begin(), C.end(), vec3(0.00, 0.00, 0.00f));
+
+    double neon_threads = timeFunction(start_threads_neon, N, m_threads, A, B, C);
+    std::printf("Time for neon_threads (void) with %i elements: %fs\n", N, neon_threads);
+    validate_sum(A, B, C, N);
+    std::fill(C.begin(), C.end(), vec3(0.00, 0.00, 0.00f));
 
     std::cout << "\n//END////END////END////END////END////END////END//\n";
     return 0;

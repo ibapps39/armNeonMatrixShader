@@ -80,14 +80,15 @@ void push_threads(std::vector<std::thread> &threads_v, int start, int end, std::
 void start_threads(int N, int max_threads, std::vector<vec3>& arr)
 {
         std::vector<std::thread> threads;
+
         int chunk_size = N / max_threads; // 1000000 / 8 = 125000
+
         for (int i = 0; i < max_threads; i++)
         {
             int start = i * chunk_size;
             int end = (i == max_threads - 1) ? N : (i + 1) * chunk_size;
             push_threads(threads, start, end, arr);
         }
-
         for (auto &t : threads)
         {
             t.join();
