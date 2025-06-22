@@ -14,43 +14,53 @@
 #include "vec3n.h"
 #include "test.h"
 
-template<typename Func, typename... Args>
-auto timeFunction(Func&& f, Args&&... args) {
-    auto begin = std::chrono::steady_clock::now();
-    if constexpr (std::is_void_v<decltype(f(args...))>) {
-        f(std::forward<Args>(args)...);
-        auto end = std::chrono::steady_clock::now();
-        return (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count()) / 1000000.0;
-    } else {
-        auto result = f(std::forward<Args>(args)...);
-        auto end = std::chrono::steady_clock::now();
-        return std::make_pair(result, (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count()) / 1000000.0);
-    }
-}
-
-void read_arr(const std::vector<vec3> &A, const std::vector<vec3> &B, const std::vector<vec3> &C)
+void read_vec(const std::vector<vec3> &A, const std::vector<vec3> &B, const std::vector<vec3> &C)
 {
 
-    std::cout << "First 10 elements: A" << std::endl;
-    for (size_t i = 0; i < 11; i++)
+    std::cout << "First 5 elements: A" << std::endl;
+    for (size_t i = 0; i < 5; i++)
     {
         std::cout << "A" << i << "[" << A[i].x() << ", " << A[i].y() << ", " << A[i].z() << "]\n";
     }
     std::cout << std::endl;
-    std::cout << "First 10 elements: B" << std::endl;
-    for (size_t i = 0; i < 11; i++)
+    std::cout << "First 5 elements: B" << std::endl;
+    for (size_t i = 0; i < 5; i++)
     {
         std::cout << "B" << i << "[" << B[i].x() << ", " << B[i].y() << ", " << B[i].z() << "]\n";
     }
     std::cout << std::endl;
-    if (C[0].x() == 0 && C[0].x() == 0 && C[0].x() == 0) {return;}
-
-        std::cout << "First 10 elements: B" << std::endl;
-        for (size_t i = 0; i < 11; i++)
-        {
-            std::cout << "C" << i << "[" << C[i].x() << ", " << C[i].y() << ", " << C[i].z() << "]\n";
-        }
+    std::cout << "First 5 elements: C" << std::endl;
+    for (size_t i = 0; i < 5; i++)
+    {
+        std::cout << "C" << i << "[" << C[i].x() << ", " << C[i].y() << ", " << C[i].z() << "]\n";
+    }
+    
     std::cout << std::endl;
+}
+void read_arr(float*& flat, int start, int end, vec3::dim dim)
+{
+    char d;
+    switch (dim)
+    {
+    case vec3::X :
+        d = 'x';
+        break;
+    case vec3::Y :
+        d = 'y';
+        break;
+    case vec3::Z :
+        d = 'z';
+        break;
+    default:
+        d = '?';
+        break;
+    }
+std::cout << "flat_" << d << "[";
+    for (size_t i = start; i < end; i++)
+    {
+        std::cout << flat[i] << ", ";
+    }
+    std::cout << "...]\n";
 }
 
 // async, give an array random floats

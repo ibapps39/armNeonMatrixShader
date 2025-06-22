@@ -3,53 +3,32 @@
 int main()
 {
     srand(time(NULL));
-    const int N = 1000000;
+    const int N = 100000000;
 
     std::vector<vec3> A(N);
     std::vector<vec3> B(N);
     std::vector<vec3> C(N);
-//\\/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-std::cout << "\n//////////////////////////////////////////////////\n";
-//\\/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    std::cout << "\n//START//START////START////START////START////START////START//\n";
     const char *command = "sysctl -n hw.ncpu";
     std::string max_t = exec(command);
     int max_threads = std::stoi(max_t);
+    unsigned int m_threads = std::thread::hardware_concurrency();
     std::clog << "MAX THREADS per sysctl -n hw.ncpu: maxt = " << max_threads << std::endl;
-//\\/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    double a_time = timeFunction(async_populate, A, 0, N - 1);
-//\\/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
-    double b_time = timeFunction(start_threads, N, max_threads, B);
-//\\/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    read_arr(A, B, C);
-//\\/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    std::cout << "A - linear, for loop time: " << a_time << "s" << std::endl;
-    std::cout << "B - threads, time: " << b_time << "s" << std::endl;
-    std::cout << std::endl;
-//\\/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    std::cout << "Example NEON SIMD" << std::endl;
-    example_SIMD();
-    std::cout << std::endl;
-//\\/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    std::cout << "NEON: C vs NEON" << std::endl;
-    double c_time_c = timeFunction(add_float_c, C, A, B, N);
-//\\/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    std::clog << "MAX THREADS per sysctl -n hw.ncpu: maxt = " << m_threads << std::endl;
+    assert(m_threads == max_threads);
 
-    // double c_time_neon1 = timeFunction(add_vec3_arrays_neon, A, B, C);
-    // std::cout << std::endl;
-    // for(int i = 0; i < 5; i++)
-    // {
-    //     std::cout << "A" << i << "[" << A[i].x() << ", " << A[i].y() << ", " << A[i].z() << "]\n";
-    //     std::cout << "B" << i << "[" << B[i].x() << ", " << B[i].y() << ", " << B[i].z() << "]\n";
-    //     std::cout << "C" << i << "[" << C[i].x() << ", " << C[i].y() << ", " << C[i].z() << "]\n";
-    //     std::cout << "\n";
-    // }
-    // std::cout << "add_float_c (C = A+B) - linear, for loop time: " << c_time_c << "s" << std::endl;
-    // std::cout << "add_float_neon1 (C = A+B) - neon, time: " << c_time_neon1 << "s" << std::endl;
-    // std::cout << std::endl;
+    std::cout << "POPULATING A, B USING THREADS" << std::endl;
+    double a_populated_by_threads = timeFunction(start_threads, N, m_threads, A);
+    double b__populated_by_threads = timeFunction(start_threads, N, m_threads, B);
 
-//\\/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //double neon_threads_test_time = timeFunction(start_neon_threads_test, A, B, C, max_threads);
-    //std::clog << "\nthrd === " << neon_threads_test_time << std::endl;
-    std::cout << "\n//////////////////////////////////////////////////\n";
+    // std::cout << "ADD FLOAT NEONC:" << std::endl;
+    // double add_float_neonc_t = timeFunction(add_float_neonc, A, B, C);
+    // std::cout << "TIME: timeFunction(add_float_neonc, A, B, C): " << add_float_neonc_t << std::endl;
+
+    double neon_add_t = timeFunction(neon_add, A, B, C);
+    std::cout << neon_add_t << std::endl;
+
+    std::cout << "\n//END////END////END////END////END////END////END//\n";
     return 0;
 }
