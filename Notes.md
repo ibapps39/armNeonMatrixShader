@@ -1,6 +1,7 @@
 # TODO
 - Fast inverse sqrt (because why not)
 - Approximating Float Square Roots Using Bit Manipulation
+- Create an easy, generic theread function for common vector operations (add/sub, mult/div, cross, project)
 
 Arr[N]
 Get max num of threads, max_threads
