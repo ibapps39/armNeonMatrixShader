@@ -212,7 +212,7 @@ void neon_sub(std::vector<std::thread> &threads_v, int start, int end, std::vect
 {
     threads_v.push_back(std::thread(&neon_sub_threaded, std::ref(A), std::ref(B), std::ref(C), start, end));
 }
-void neon_mult(std::vector<std::thread> &threads_v, int start, int end, std::vector<vec3> &A, std::vector<vec3> &B, std::vector<vec3> &C)
+void neon_dot(std::vector<std::thread> &threads_v, int start, int end, std::vector<vec3> &A, std::vector<vec3> &B, std::vector<vec3> &C)
 {
     threads_v.push_back(std::thread(&neon_dot_threaded, std::ref(A), std::ref(B), std::ref(C), start, end));
 }
@@ -268,7 +268,7 @@ void thread_neon(int N, char op, int max_threads, std::vector<vec3> &A, std::vec
         {
             int start = i * chunk_size;
             int end = (i == max_threads - 1) ? N : (i + 1) * chunk_size;
-            neon_mult(threads, start, end, A, B, C);
+            neon_dot(threads, start, end, A, B, C);
         }
         break;
     case '/':
@@ -276,7 +276,7 @@ void thread_neon(int N, char op, int max_threads, std::vector<vec3> &A, std::vec
         {
             int start = i * chunk_size;
             int end = (i == max_threads - 1) ? N : (i + 1) * chunk_size;
-            neon_mult(threads, start, end, A, B, C);
+            neon_dot(threads, start, end, A, B, C);
         }
         break;
     case 'c':
