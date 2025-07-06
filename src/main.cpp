@@ -36,10 +36,10 @@ int main()
     std::cout << std::endl;
     std::fill(C.begin(), C.end(), vec3(0.00, 0.00, 0.00f));
 
-    double neon_add_t = timeFunction(
+    double neon_add_time = timeFunction(
         static_cast<void(*)(const std::vector<vec3> &, const std::vector<vec3> &, std::vector<vec3> &)>(neon_add), A, B, C
     );
-    std::printf("Time for neon_add (void) with %i elements: %fs\n", N, neon_add_t);
+    std::printf("Time for neon_add (void) with %i elements: %fs\n", N, neon_add_time);
     validate_sum(A, B, C, N);
     std::cout << std::endl;
     std::fill(C.begin(), C.end(), vec3(0.00, 0.00, 0.00f));
@@ -53,10 +53,62 @@ int main()
     std::cout << std::endl;
     std::fill(C.begin(), C.end(), vec3(0.00, 0.00, 0.00f));
 
-    double neon_threads = timeFunction(start_threads_neon, N, m_threads, A, B, C);
+    double neon_threads = timeFunction(thread_neon_switch, N, '+', m_threads, A, B, C);
     std::printf("Time for neon_threads (void) with %i elements: %fs\n", N, neon_threads);
     validate_sum(A, B, C, N);
+    std::cout << std::endl;
     std::fill(C.begin(), C.end(), vec3(0.00, 0.00, 0.00f));
+
+    auto begin = std::chrono::steady_clock::now();
+    thread_neon(neon_add, std::ref(A), std::ref(B), std::ref(C));
+    auto end = std::chrono::steady_clock::now();
+    double neon_threads_generic_time = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000000.0;
+    std::printf("Time for neon_threads_generic (void), adding, with %i elements: %fs\n", N, neon_threads_generic_time);
+    validate_sum(A, B, C, N);
+    std::cout << std::endl;
+    std::fill(C.begin(), C.end(), vec3(0.00, 0.00, 0.00f));
+    
+    begin = std::chrono::steady_clock::now();
+    thread_neon(neon_sub, std::ref(A), std::ref(B), std::ref(C));
+    end = std::chrono::steady_clock::now();
+    neon_threads_generic_time = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000000.0;
+    std::printf("Time for neon_threads_generic (void), subtracting, with %i elements: %fs\n", N, neon_threads);
+    validate_diff(A, B, C, N);
+    std::cout << std::endl;
+    std::fill(C.begin(), C.end(), vec3(0.00, 0.00, 0.00f));
+
+    begin = std::chrono::steady_clock::now();
+    thread_neon(neon_dot, std::ref(A), std::ref(B), std::ref(C));
+    end = std::chrono::steady_clock::now();
+    neon_threads_generic_time = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000000.0;
+    std::printf("Time for neon_threads_generic (void), dot, with %i elements: %fs\n", N, neon_threads);
+    validate_dot(A, B, C, N);
+    std::cout << std::endl;
+    std::fill(C.begin(), C.end(), vec3(0.00, 0.00, 0.00f));
+
+    begin = std::chrono::steady_clock::now();
+    thread_neon(neon_div, std::ref(A), std::ref(B), std::ref(C));
+    end = std::chrono::steady_clock::now();
+    neon_threads_generic_time = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000000.0;
+    std::printf("Time for neon_threads_generic (void), divide, with %i elements: %fs\n", N, neon_threads);
+    validate_div(A, B, C, N);
+    std::cout << std::endl;
+    std::fill(C.begin(), C.end(), vec3(0.00, 0.00, 0.00f));
+
+    begin = std::chrono::steady_clock::now();
+    thread_neon(neon_cross, std::ref(A), std::ref(B), std::ref(C));
+    end = std::chrono::steady_clock::now();
+    neon_threads_generic_time = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000000.0;
+    std::printf("Time for neon_threads_generic (void), cross, with %i elements: %fs\n", N, neon_threads);
+    //validate_cross(A, B, C, N);
+    std::cout << std::endl;
+    read_vec(A, B, C);
+    for(int i=0; i < 10; i++)
+    {
+        vec3 C = cross(A[i],B[i]);
+        std::cout << C << std::endl;
+    }
+    //std::fill(C.begin(), C.end(), vec3(0.00, 0.00, 0.00f));
 
     std::cout << "\n//END////END////END////END////END////END////END//\n";
     return 0;
