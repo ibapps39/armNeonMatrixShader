@@ -130,9 +130,9 @@ vec3 operator/(const vec3 &v, float t)
 vec3 cross(const vec3 &u, const vec3 &v)
 {
     return vec3(
-        u.e[vec3::Y] * v.e[vec3::Z] - u.e[vec3::Z] * v.e[vec3::Y],
-        u.e[vec3::Z] * v.e[vec3::X] - u.e[vec3::X] * v.e[vec3::Z],
-        u.e[vec3::X] * v.e[vec3::Y] - u.e[vec3::Y] * v.e[vec3::X]
+        u.e[vec3::Y] * v.e[vec3::Z] - u.e[vec3::Z] * v.e[vec3::Y], // X
+        u.e[vec3::Z] * v.e[vec3::X] - u.e[vec3::X] * v.e[vec3::Z], // Y
+        u.e[vec3::X] * v.e[vec3::Y] - u.e[vec3::Y] * v.e[vec3::X]  // Z
     );
 }
 inline void normalize(const vec3& u)
