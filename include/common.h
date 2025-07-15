@@ -15,6 +15,7 @@
 #include "vec3n.h"
 #include "test.h"
 #include "ops_c.h"
+#include "arm_asm_op.h"
 
 void read_vec(const std::vector<vec3> &A, const std::vector<vec3> &B, const std::vector<vec3> &C)
 {

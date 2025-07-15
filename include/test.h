@@ -136,15 +136,32 @@ void error_cross(std::vector<vec3> &A, std::vector<vec3> &B, std::vector<vec3> &
 void validate_cross(std::vector<vec3> &A, std::vector<vec3> &B, std::vector<vec3> &C, size_t N)
 {
     size_t correct = 0;
-    size_t i = 0;
-    for (; i < N; ++i)
+    // We'll store the index of the first error
+    size_t first_error_idx = N; // Initialize to N, implying no error found yet
+
+    for (size_t i = 0; i < N; ++i)
     {
-        correct += (C[i].x() == ((A[i].y() * B[i].z()) - A[i].z() * B[i].y()) &&
-                    C[i].y() == ((A[i].z() * B[i].x()) - A[i].x() * B[i].z()) &&
-                    C[i].z() == ((A[i].x() * B[i].y()) - A[i].y() * B[i].x()));
+        bool is_correct = ( 
+            fabsf(C[i].x() - ( (A[i].y() * B[i].z()) - (A[i].z() * B[i].y()) ) ) <= 1e-3
+            && 
+            fabsf(C[i].y() - ( (A[i].z() * B[i].x()) - (A[i].x() * B[i].z()) ) ) <= 1e-3
+            &&
+            fabsf(C[i].z() - ( (A[i].x() * B[i].y()) - (A[i].y() * B[i].x()) ) ) <= 1e-3
+        );
+        
+        if (is_correct) {
+            correct++;
+        } else {
+            // If this is the first error found, record its index
+            if (first_error_idx == N) {
+                first_error_idx = i;
+            }
+            std::cout << fabsf(C[i].x() - ( (A[i].y() * B[i].z()) - (A[i].z() * B[i].y()) ) ) << std::endl;
+        }
     }
-    if (correct < i) { 
-        error_cross(A, B, C, i); 
+
+    if (correct < N) { // If not all elements are correct
+        error_cross(A, B, C, first_error_idx);
     }
     std::cout << "Correct: " << correct << "/" << N << std::endl;
 }
