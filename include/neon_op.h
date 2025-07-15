@@ -229,7 +229,7 @@ void neon_cross_threaded(const std::vector<vec3> &A, const std::vector<vec3> &B,
         // A[i].x() * B[i].y() - A[i].y() * B[i].x()
 
         R[i].e[vec3::X] = (A[i].y() * B[i].z()) - (A[i].z() * B[i].y());
-        R[i].e[vec3::Y] = (A[i].x() * B[i].z()) - (A[i].z() * B[i].x());
+        R[i].e[vec3::Y] = (A[i].z() * B[i].x()) - (A[i].x() * B[i].z());
         R[i].e[vec3::Z] = (A[i].x() * B[i].y()) - (A[i].y() * B[i].x());
 
         // float32x2_t vec_a_1 = vld1_f32(a_ptr + 1); // D register = [ak, aj]
