@@ -165,7 +165,7 @@ int main()
     }
     end = std::chrono::steady_clock::now();
     time = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000000.0;
-    std::printf("Time for C_add_time with %i elements: %fs\n", N, time);
+    std::printf("Time for for loop of 'C[i] = A[i]+B[i]' with %i elements: %fs\n", N, time);
     validate_sum(std::ref(A), std::ref(B), std::ref(C), N);
     std::fill(C.begin(), C.end(), vec3(0.00, 0.00, 0.00f));
     std::cout << std::endl;
