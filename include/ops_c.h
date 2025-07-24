@@ -10,12 +10,12 @@ void async_populate(std::vector<vec3> &v, int start, int end)
     }
 }
 // threads to vector that are prepopulated with tiles
-void push_threads(std::vector<std::thread> &threads_v, int start, int end, std::vector<vec3> &v)
+void populate_threads_async(std::vector<std::thread> &threads_v, int start, int end, std::vector<vec3> &v)
 {
     threads_v.push_back(std::thread(&async_populate, std::ref(v), start, end));
 }
 
-void start_threads(int N, int max_threads, std::vector<vec3>& arr)
+void populate_threads_random_vectors(int N, int max_threads, std::vector<vec3>& arr)
 {
         std::vector<std::thread> threads;
 
@@ -25,7 +25,7 @@ void start_threads(int N, int max_threads, std::vector<vec3>& arr)
         {
             int start = i * chunk_size;
             int end = (i == max_threads - 1) ? N : (i + 1) * chunk_size;
-            push_threads(threads, start, end, arr);
+            populate_threads_async(threads, start, end, arr);
         }
         for (auto &t : threads)
         {

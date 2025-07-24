@@ -363,3 +363,4 @@ void thread_neon_switch(int N, char op, int max_threads, std::vector<vec3> &A, s
         t.join();
     }
 }
+
